@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+
+    <title>Региональный   
+ аэропорт Самолет</title>
+    <link rel="stylesheet" href="{% static 'blog/css/index.css' %}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+    <header>
+
+    </header>
+
+    <main>
+    	<!-- Секция главного экрана-->
+        <section class="hero">
+        	<div name="hero_href">
+        		<header>
+        		<nav>
+		            <ul>
+		                <li><a href="{% url "login" %}">Вход</a></li>
+		                <li><a href="{% url "schedule_view" %}">Расписание</a></li>
+						<li><a href="{% url "reviews" %}">Отзывы</a></li>
+		            </ul>
+        		</nav>
+        		<div name="texts">
+        			<h1>Региональный аэропорт</h1>
+        			<h2>Самолёт</h2>
+        		</div>
+        		
+        	</header>
+        	</div>
+        	
+        	<main name="hero_main">
+		        
+		        <p>Перелеты на самолетах и вертолетах. Бронирование по телефону</p>
+
+    		</main>
+        </section>
+        
+		<!-- Секция экрана приветствия-->
+        <section class="welcome">
+	  		<div class="welcome_content">
+			    <h2>Добро пожаловать в региональный аэропорт Самолет</h2>
+			    <p>Мы обеспечиваем удобные и безопасные перелеты на самолетах и вертолетах различных моделей. Узнай больше о нашем расписании.</p>
+			    
+	  		</div>
+	  		<div class="welcome__image">
+			    <img src="{%static 'blog/img/raspisanie_v1.jpg'%}" alt="Самолет на взлетной полосе">
+			    <img src="{%static 'blog/img/raspisanie_v3.jpg'%}" alt="Терминал аэропорта">
+	  		</div>
+	  		<button><a href="{% url "schedule_view" %}" class="btn">Расписание рейсов</a></button>
+        </section>
+        <!-- Секция экрана отзывов-->
+        <section class="reviews">
+        	<div name="reviews_text">
+        		<h2>Отзывы наших клиентов</h2>
+  				<p>Что говорят о нас</p>
+        	</div>
+        	
+		    <div class="review-cards">
+			    <div class="review-card">
+				    <p>Быстрое и удобное бронирование билетов. Отличная поддержка клиентов!</p>
+				    <p name="name_1">Алексей</p>
+			    </div>
+			    <div class="review-card">
+				    <p>Прекрасное обслуживание и доступные цены.</p>
+				    <p name="name_2">Ольга</p>
+			    </div>
+			    <div class="review-card">
+				    <p>Большой выбор рейсов и внимательное обслуживание. Рекомендую всем!</p>
+				    <p name="name_3">Екатерина</p>
+			    </div>
+		  	</div>
+		    <button><a href="{% url "reviews" %}" class="btn">Оставить отзыв</a></button>
+        </section>
+
+    </main>
+
+    <footer>
+
+    </footer>
+
+<script src="index.js"></script>
+
+</body>
+</html>

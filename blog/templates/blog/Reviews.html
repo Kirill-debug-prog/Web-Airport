@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отзывы</title>
+    <link rel="stylesheet" href="{% static 'blog/css/Reviews.css' %}">
+    <script src="{% static 'blog/js/Reviews.js' %}" defer></script>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="{% static 'blog/img/Logo.png' %}" alt="Логотип">
+        </div>
+        <h1 class="title">Отзывы</h1>
+        <button class="button-text">Написать отзыв</button>
+        <div class="reviews-container">
+            {% for review in reviews %}
+                <div class="review-group">
+                    <div class="review-rectangle">
+                        <p class="review-name">{{ review.name }}</p>
+                        <p class="review-text">{{ review.review_text }}</p>
+                        <p class="review-date">{{ review.date_of_revocation }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p>Отзывов пока нет.</p>
+            {% endfor %}
+        </div>        
+    </div>
+
+    <!-- Модальное окно для добавления отзыва -->
+    <div id="review-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Добавить отзыв</h2>
+            <div class="input-group">
+                <input type="text" id="name" placeholder="Имя">
+            </div>
+            <div class="input-group">
+                <textarea id="review-text" placeholder="Опишите плюсы и минусы"></textarea>
+            </div>
+            <button id="submit-review">Отправить</button>
+        </div>
+    </div>
+
+    <input type="hidden" id="csrf-token" value="{{ csrf_token }}">
+</body>
+</html>

@@ -1,0 +1,292 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поиск авиабилетов</title>
+    <link rel="stylesheet" href="{% static 'blog/css/Flights.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="navigation">
+            <a href="{% url "schedule_view" %}" class="nav-button">Расписание</a>
+            <a href="{% url "passenger_info" %}" class="nav-button">Информация пассажира</a>
+            <a href="{% url "home" %}" class="nav-button">Выход</a>
+        </div>     
+    </header>
+    <div class="container">
+        <header>
+            <img src="{% static 'blog/img/Logo.png' %}" alt="Самолет" class="logo">
+            <form id="flight-search-form">
+                <input type="text" id="arrival_airport" placeholder="Аэропорт прилета" required>
+                <input type="date" id="departure_date" placeholder="Дата вылета" required>
+                <button type="submit">Найти</button>
+            </form>
+        </header>
+        <main>
+            <h2>Поиск рейсов</h2>
+            <div class="date-picker">
+                <button id="prev-date">&lt; Ранее</button>
+                <button id="date-1" data-date="2024-07-04">4 июля</button>
+                <button id="date-2" data-date="2024-07-05">5 июля</button>
+                <button id="date-3" data-date="2024-07-06">6 июля</button>
+                <button id="next-date">Позже &gt;</button>
+            </div>
+            <table id="flights-table">
+                <thead>
+                    <tr>
+                        <th>Вылет</th>
+                        <th>Прилет</th>
+                        <th>Перевозчик</th>
+                        <th>Рейс</th>
+                        <th>Цена</th>
+                        <th>Действие</th>
+                    </tr>
+                </thead>
+                <tbody id="flights-tbody">
+                    <tr>
+                        <td colspan="5">Введите данные для поиска рейсов.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="error-message" style="display: none; color: red;"></div>
+        </main>
+    </div>
+
+    <!-- Модальное окно -->
+    <div id="modal-overlay" class="modal-overlay" style="display: none;">
+        <div id="modal-content" class="modal-content">
+            <h1>Выбор тарифа: Откуда → Куда</h1>
+            <table class="flight-info">
+                <tr>
+                    <th>Рейс</th>
+                    <th>Перевозчик</th>
+                    <th>Направление</th>
+                </tr>
+                <tr id="modal-flight-info">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+            <div class="passenger-data">
+                <h2>Данные пассажира</h2>
+                <input class='passenger' type="text" placeholder="Фамилия">
+                <input class='passenger' placeholder="Имя">
+                <input class='passenger' placeholder="Отчество">
+                <input class='passenger' placeholder="Контактная информация">
+                <input class='passenger' placeholder="Паспортные данные">
+                <input class='passenger' placeholder="Бронь">
+
+            </div>
+
+            <div class="price-info">
+                <span>Цена: <span id="price-value">0</span></span>
+                <span>Скидка: <input id="discount-input" type="number" placeholder="0" style="width: 60px;">%</span>
+                <span>Итого: <span id="total-price">0</span></span>
+            </div>
+            
+            <button id="book-button">Забронировать</button>
+            <button id="close-modal">Закрыть</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('flight-search-form').addEventListener('submit', function(event) {
+            event.preventDefault();  // Отмена перезагрузки страницы
+        
+            const arrivalAirport = document.getElementById('arrival_airport').value.trim();
+            const departureDate = document.getElementById('departure_date').value;
+        
+            // Убедитесь, что название аэропорта имеет необходимую длину
+            if (arrivalAirport.length < 3) {  // Минимальная длина, например, 3 символа
+                const errorMessage = document.getElementById('error-message');
+                errorMessage.textContent = 'Пожалуйста, введите полное название аэропорта.';
+                errorMessage.style.display = 'block';  // Показываем сообщение об ошибке
+                return;  // Не отправляем запрос
+            }
+        
+            // AJAX запрос через fetch
+            fetch("{% url 'search_flight' %}?arrival_airport=" + encodeURIComponent(arrivalAirport) + "&departure_date=" + encodeURIComponent(departureDate), {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'  // Для обработки как AJAX-запрос на сервере
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Сеть ответила ошибкой.');
+                }
+                return response.json();  // Ответ преобразован в JSON
+            })
+            .then(data => {
+                const flightsTableBody = document.getElementById('flights-tbody');
+                flightsTableBody.innerHTML = '';  // Очищаем таблицу перед обновлением
+                const errorMessage = document.getElementById('error-message');
+                errorMessage.style.display = 'none';  // Скрываем сообщение об ошибке
+        
+                if (data.flights.length > 0) {
+                    data.flights.forEach(flight => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${flight.departure_time}</td>
+                            <td>${flight.arrival_time}</td>
+                            <td>${flight.airline__airline_name}</td>
+                            <td>${flight.flight_number}</td>
+                            <td>${flight.price}</td>
+                            <td><button class="select-flight" data-flight-info='${JSON.stringify(flight)}'>Выбрать рейс</button></td>
+                        `;
+                        flightsTableBody.appendChild(row);
+                    });
+                    
+                    document.querySelector('.date-picker').style.display = 'block';
+
+                } else {
+                    flightsTableBody.innerHTML = '<tr><td colspan="5">Рейсов нет</td></tr>';
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка при получении рейсов:', error);
+                const errorMessage = document.getElementById('error-message');
+                errorMessage.textContent = 'Ошибка при получении данных. Пожалуйста, попробуйте снова.';
+                errorMessage.style.display = 'block';  // Показываем сообщение об ошибке
+            });
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Получаем элементы кнопок по их идентификаторам
+            const dateButtons = document.querySelectorAll('.date-picker button');
+        
+            // Добавляем обработчик кликов для каждой кнопки
+            dateButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Получаем дату из data-атрибута кнопки
+                    const selectedDate = this.getAttribute('data-date');
+                    
+                    // Устанавливаем значение даты в поле ввода формы
+                    document.getElementById('departure_date').value = selectedDate;
+        
+                    // Если форма уже была отправлена, можно вручную вызвать её обработку
+                    document.getElementById('flight-search-form').dispatchEvent(new Event('submit'));
+                });
+            });
+        });
+
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('select-flight')) {
+                const flightInfo = JSON.parse(event.target.getAttribute('data-flight-info'));
+                document.querySelector('#modal-flight-info td:nth-child(1)').textContent = flightInfo.flight_number;
+                document.querySelector('#modal-flight-info td:nth-child(2)').textContent = flightInfo.airline__airline_name;
+                document.querySelector('#modal-flight-info td:nth-child(3)').textContent = flightInfo.departure_location + ' → ' + flightInfo.arrival_location;
+                document.getElementById('modal-overlay').style.display = 'flex';
+            }
+        });
+
+        document.getElementById('close-modal').addEventListener('click', function() {
+            document.getElementById('modal-overlay').style.display = 'none';
+        });
+
+        document.addEventListener('input', function(event) {
+            if (event.target.id === 'discount-input') {
+                const price = parseFloat(document.getElementById('price-value').textContent) || 0;
+                const discount = parseFloat(event.target.value) || 0;
+                const discountedPrice = price - (price * (discount / 100));
+                document.getElementById('total-price').textContent = discountedPrice.toFixed(2);
+            }
+        });
+        
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('select-flight')) {
+                const flightInfo = JSON.parse(event.target.getAttribute('data-flight-info'));
+                document.querySelector('#modal-flight-info td:nth-child(1)').textContent = flightInfo.flight_number;
+                document.querySelector('#modal-flight-info td:nth-child(2)').textContent = flightInfo.airline__airline_name;
+                document.querySelector('#modal-flight-info td:nth-child(3)').textContent = flightInfo.departure_location + ' → ' + flightInfo.arrival_location;
+                
+                // Устанавливаем цену
+                document.getElementById('price-value').textContent = flightInfo.price;
+                
+                // Очищаем и скрываем скидку и итоговую цену
+                document.getElementById('discount-input').value = '';
+                document.getElementById('total-price').textContent = '0';
+                
+                document.getElementById('modal-overlay').style.display = 'flex';
+            }
+        });
+        
+        document.getElementById('book-button').addEventListener('click', function() {
+            const lastName = document.querySelector('.passenger:nth-of-type(1)').value;
+            const firstName = document.querySelector('.passenger:nth-of-type(2)').value;
+            const middleName = document.querySelector('.passenger:nth-of-type(3)').value;
+            const contactInfo = document.querySelector('.passenger:nth-of-type(4)').value;
+            const passportDetails = document.querySelector('.passenger:nth-of-type(5)').value;
+            const booking = document.querySelector('.passenger:nth-of-type(6)').value;
+            
+            const flightNumber = document.querySelector('#modal-flight-info td:nth-child(1)').textContent;
+            const price = parseFloat(document.getElementById('price-value').textContent) || 0;
+            const discount = parseFloat(document.getElementById('discount-input').value) || 0;
+            const totalPrice = parseFloat(document.getElementById('total-price').textContent) || 0;
+            
+            if (!lastName || !firstName || !contactInfo || !passportDetails || !booking) {
+                alert('Пожалуйста, заполните все поля.');
+                return;
+            }
+            
+            const bookingData = {
+                last_name: lastName,
+                first_name: firstName,
+                middle_name: middleName,
+                contact_info: contactInfo,
+                passport_details: passportDetails,
+                booking: booking,
+                flight_number: flightNumber,
+                price: price,
+                discount: discount,
+                total_price: totalPrice
+            };
+            
+            fetch('/book-flight/', {  // URL должен быть заменен на реальный URL вашего сервера
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')  // Добавьте CSRF токен для Django
+                },
+                body: JSON.stringify(bookingData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Бронирование успешно! Номер билета: ' + data.ticket_number);
+                    document.getElementById('modal-overlay').style.display = 'none';
+                } else {
+                    alert('Ошибка при бронировании. Пожалуйста, попробуйте снова.');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка при отправке данных:', error);
+                alert('Ошибка при отправке данных. Пожалуйста, попробуйте снова.');
+            });
+        });
+        
+        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+/* Обновленный стиль для страницы расписания */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    /* Удаляем белый фон */
+    background: none;
+    /* Центрируем контейнер по горизонтали */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.logo {
+    position: absolute;
+    width: 150px;
+    height: 68px;
+    left: 14px;
+    top: 17px;
+}
+
+.logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.title {
+    font-size: 24px;
+    color: #333333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.schedule-wrapper {
+    margin-top: 20px;
+    width: 100%;
+    /* Выравнивание по центру */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.schedule-filters {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ececec;
+    padding-bottom: 10px;
+    width: 100%;
+    max-width: 1440px; /* Максимальная ширина фильтров */
+}
+
+.schedule-filters__item {
+    margin-right: 20px;
+}
+
+.schedule-filters__item-header {
+    font-size: 18px;
+    color: #555555;
+    margin-bottom: 10px;
+}
+
+.schedule-filters__item-selected-text {
+    font-size: 16px;
+    color: #000000;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.schedule-filters__item-option-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.schedule-filters__item-option {
+    margin-bottom: 5px;
+}
+
+.schedule-filters__item-option-input {
+    display: none;
+}
+
+.schedule-filters__item-option-label {
+    display: inline-block;
+    padding: 8px 15px;
+    background: #f1f1f1;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.schedule-filters__item-option-label:hover,
+.schedule-filters__item-option--selected .schedule-filters__item-option-label {
+    background: #5d26d4;
+    color: #ffffff;
+}
+
+.schedule-filters__button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 10px;
+}
+
+.schedule-filters__expand-icon {
+    width: 20px;
+    height: auto;
+    transition: transform 0.3s;
+}
+
+.schedule-filters__button:focus .schedule-filters__expand-icon {
+    transform: rotate(180deg);
+}
+
+.schedule-table_wrapper {
+    margin-top: 20px;
+    /* Центрирование таблицы */
+    width: 100%;
+    /* Убираем горизонтальные отступы */
+    padding: 0;
+}
+
+.schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.schedule-table thead {
+    background: #512C9F;
+    color: #ffffff;
+}
+
+.schedule-table th, .schedule-table td {
+    padding: 12px 15px;
+    text-align: left;
+}
+
+.schedule-table tbody tr {
+    background: #ffffff;
+    transition: background 0.3s;
+}
+
+.schedule-table tbody tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+.schedule-table tbody tr:hover {
+    background: #7448D1;
+    color: #ffffff;
+}
+
+#no-flights-message {
+    text-align: center;
+    color: #888888;
+    font-size: 16px;
+}

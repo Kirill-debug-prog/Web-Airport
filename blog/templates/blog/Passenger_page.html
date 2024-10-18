@@ -1,0 +1,223 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'blog\css\Passenger_page.css' %}">
+    <title>Региональный аэропорт Самолет</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+    </header>
+    <main>
+        <img src="{% static 'blog/img/passenger.jfif' %}" alt="Passenger Image">
+        
+        <div class="info_pass">
+            <p>Информация о пассажире</p>
+        </div>
+
+        <div class="name_div">
+            <input type="text" id="last_name_input" placeholder="Фамилия">
+            <button id="search-button">Поиск</button>
+            <button id="edit-button">Изменить</button>
+        </div>
+        
+        <section class="info_sec">
+            <div class="info">
+                <span id="last_name_span">Фамилия</span>
+                <span id="first_name_span">Имя</span>
+                <span id="middle_name_span">Отчество</span>
+                <span id="contact_info_span">Контактная информация</span>
+                <span id="passport_details_span">Паспортные данные</span>
+                <span id="flight_number_span">Номер рейса</span>
+                <span id="booking_span">Бронь</span>
+                <span id="discount_span">Скидка</span>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <!-- Здесь можно добавить контактную информацию или ссылки на соцсети -->
+    </footer>
+
+    <!-- Модальное окно -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Изменение данных пассажира</h2>
+            <div class="form-group">
+                <input type="text" placeholder="Имя" id="first-name">
+            </div>
+            <div class="form-group">
+                <input type="text" placeholder="Фамилия" id="last-name">
+            </div>
+            <div class="form-group">
+                <input type="text" placeholder="Отчество" id="middle-name">
+            </div>
+            <div class="form-group">
+                <input type="text" placeholder="Контактаная информация" id="contact-info">
+            </div>
+            <div class="form-group">
+                <input type="text" placeholder="Паспортные даные" id="passport-info">
+            </div>
+            <div class="form-group">
+                <input type="text" placeholder="Номер рейса" id="flight-number">
+            </div>
+            <div class="form-group">
+                <input type="text" placeholder="Броонь" id="booking">
+            </div>
+            <div class="form-group">
+                <input type="text" placeholder="Скидка" id="discount">
+            </div>
+            <div class="button-group">
+                <button id="save-changes">Сохранить изменения</button>
+                <button id="delete-passenger">Удалить</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Функция для получения CSRF токена из cookies
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // JavaScript для поиска пассажира
+        document.getElementById('search-button').addEventListener('click', function() {
+            var lastName = document.getElementById('last_name_input').value;
+
+            // AJAX запрос
+            fetch(`/search_passenger/?last_name=${lastName}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Обновляем данные на странице
+                        document.getElementById('last_name_span').textContent = data.data.last_name;
+                        document.getElementById('first_name_span').textContent = data.data.first_name;
+                        document.getElementById('middle_name_span').textContent = data.data.middle_name || '—';
+                        document.getElementById('contact_info_span').textContent = data.data.contact_info;
+                        document.getElementById('passport_details_span').textContent = data.data.passport_details;
+                        document.getElementById('flight_number_span').textContent = data.data.flight_number;
+                        document.getElementById('booking_span').textContent = data.data.booking || '—';
+                        document.getElementById('discount_span').textContent = data.data.discount;
+
+                        // Заполняем модальное окно
+                        document.getElementById('first-name').value = data.data.first_name;
+                        document.getElementById('last-name').value = data.data.last_name;
+                        document.getElementById('middle-name').value = data.data.middle_name || '';
+                        document.getElementById('contact-info').value = data.data.contact_info;
+                        document.getElementById('passport-info').value = data.data.passport_details;
+                        document.getElementById('flight-number').value = data.data.flight_number;
+                        document.getElementById('booking').value = data.data.booking || '';
+                        document.getElementById('discount').value = data.data.discount;
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+        // JavaScript для открытия и закрытия модального окна
+        const modal = document.getElementById("modal");
+        const editButton = document.getElementById("edit-button");
+        const close = document.getElementsByClassName("close")[0];
+        const saveChanges = document.getElementById("save-changes");
+        const deletePassenger = document.getElementById("delete-passenger");
+
+        editButton.onclick = function() {
+            // Показываем модальное окно
+            modal.style.display = "block";
+        }
+
+        close.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        saveChanges.onclick = function() {
+            // Собираем обновленные данные
+            var updatedData = {
+                first_name: document.getElementById('first-name').value,
+                last_name: document.getElementById('last-name').value,
+                middle_name: document.getElementById('middle-name').value,
+                contact_info: document.getElementById('contact-info').value,
+                passport_details: document.getElementById('passport-info').value,
+                flight_number: document.getElementById('flight-number').value,
+                booking: document.getElementById('booking').value,
+                discount: document.getElementById('discount').value,
+            };
+
+            // AJAX запрос для обновления данных
+            fetch(`/update_passenger/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken') // Убедитесь, что CSRF токен присутствует
+                },
+                body: JSON.stringify(updatedData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert("Изменения сохранены!");
+                    modal.style.display = "none";
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        deletePassenger.onclick = function() {
+            var lastName = document.getElementById('last-name').value;
+
+            // AJAX запрос для удаления данных
+            fetch(`/delete_passenger/?last_name=${lastName}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken') // Убедитесь, что CSRF токен присутствует
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert("Пассажир удален!");
+                    modal.style.display = "none";
+                    // Очистка данных на странице
+                    document.getElementById('last_name_span').textContent = 'Фамилия';
+                    document.getElementById('first_name_span').textContent = 'Имя';
+                    document.getElementById('middle_name_span').textContent = 'Отчество';
+                    document.getElementById('contact_info_span').textContent = 'Контактная информация';
+                    document.getElementById('passport_details_span').textContent = 'Паспортные данные';
+                    document.getElementById('flight_number_span').textContent = 'Номер рейса';
+                    document.getElementById('booking_span').textContent = 'Бронь';
+                    document.getElementById('discount_span').textContent = 'Скидка';
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>

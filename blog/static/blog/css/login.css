@@ -1,0 +1,73 @@
+.inter-<uniquifier> {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: <weight>;
+  font-style: normal;
+}
+div{
+  margin-top: 200px;
+}
+
+a{
+  text-decoration: none;
+  color: white;
+}
+
+body{
+  padding: 0px;
+  margin: 0px;
+  text-align: center;
+  height: 100%;
+  max-height: 1080px;
+  width: 100%;
+  
+  padding: 0px;
+  padding-right: 0;
+  padding-left: 0;
+  margin: 0px;
+  background-image: url(../img/background.jpg);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+button{
+  font-size: 35px;
+  font-weight: 400;
+  border-radius: 30px;
+  background-color: #7448D1 ;
+  width: 291px;
+  height: 67px;
+  font-family: "Inter", "Arial", sans-serif;
+  margin: 70px;
+}
+
+
+p{
+  font-family: "Inter", "Arial", sans-serif;
+  font-weight: bolder;
+  font-size: 60px;
+}
+
+input{
+  font-weight: 400;
+  font-size: 20px;
+  font-family: "Inter", "Arial", sans-serif;
+  margin: 10px;
+  border-radius: 20px;
+  width: 400px;
+  height: 50px;
+
+}
+
+form{
+  display: flex;
+  align-items: center;
+  text-align: center;
+  flex-direction: column;
+
+}

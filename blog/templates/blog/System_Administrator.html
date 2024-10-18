@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Самолет</title>
+    <link rel="stylesheet" href="{% static 'blog/css/System_Administrator.css' %}">
+</head>
+<body>
+    <img src="{% static 'blog/img/Logo.png' %}" alt="Логотип Самолет" class="logo">
+    
+    <div class="header">
+        <div class="nav-bar">
+            <a href="{% url 'cashier_info' %}" class="nav-button">Информация кассира</a>
+            <a href="{% url "home" %}" class="nav-button">Выход</a>
+        </div>
+    </div>
+    
+    <div class="photo-placeholder">Фото</div>
+
+    <div class="group">
+        <div class="input-container">Николаевич</div>
+        <div class="input-container">Дмитрий</div>
+        <div class="input-container">d.nikolaev@airport2024.com</div>
+    </div>
+
+    <div class="images-container">
+        <img src="{% static 'blog/img/sistemi.jpg' %}" alt="Изображение 1" class="image image1">
+        <img src="{% static 'blog/img/sistemi2.jpg' %}" alt="Изображение 2" class="image image3">
+        <img src="{% static 'blog/img/sistemi3.jpg' %}" alt="Изображение 3" class="image image2">
+    </div>
+
+    <button class="registration">Регистрация кассира</button>
+
+    <!-- Модальное окно для регистрации кассира -->
+    <div id="modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="input-group">
+                <input type="text" placeholder="Фамилия" class="input-field" id="surname" name="surname">
+                <input type="text" placeholder="Имя" class="input-field" id="name" name="name">
+                <input type="email" placeholder="Email" class="input-field" id="email" name="email">
+                <input type="text" placeholder="Логин" class="input-field" id="login" name="login">
+                <input type="password" placeholder="Пароль" class="input-field" id="password" name="password">
+                <button class="submit-button">Добавить</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'blog/js/System_Administrator.js' %}"></script>
+</body>
+</html>

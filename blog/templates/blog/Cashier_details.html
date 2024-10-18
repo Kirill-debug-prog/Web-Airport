@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Информация кассира</title>
+    <link rel="stylesheet" href="{% static 'blog/css/Cashier_details.css' %}">
+</head>
+<body>
+    <img src="{% static 'blog/img/Cashier page.jpg' %}" alt="Изображение" class="image">
+    <img src="{% static 'blog/img/Logo.png' %}" alt="Логотип Самолет" class="logo">
+
+    <div class="photo-placeholder">Фото</div>
+
+    <div class="input"> 
+        <input type="text" placeholder="Фамилия" class="input-container">
+        <button class="search-button">Поиск кассира</button>
+    </div>
+
+    <div class="info-group" id="cashier-info">
+        <div class="info-container" id="last-name">Фамилия: -</div>
+        <div class="info-container" id="first-name">Имя: -</div>
+        <div class="info-container" id="email">Email: -</div>
+        <div class="info-container" id="login">Логин: -</div>
+        <div class="info-container" id="date-joined">Дата регистрации: -</div>
+    </div>
+
+
+    <!-- Подключаем файл с JavaScript -->
+    <script src="{% static 'blog/js/Cashier_details.js' %}"></script>
+</body>
+</html>

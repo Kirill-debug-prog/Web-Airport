@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Расписание</title>
+    <link rel="stylesheet" href="{% static 'blog\css\Schedule.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'blog/js/Schedule.js' %}" defer></script>
+</head>
+<body>
+    <main>
+        <div class="container"> 
+            <div class="logo">
+                <img src="{% static 'blog/img/Logo.png' %}" alt="Логотип">
+            </div>
+
+            <h1 class="title">Расписание</h1>
+
+            <div class="schedule-wrapper">
+                <div class="schedule-filters">
+                    <div class="schedule-filters__item j-schedule-filter-flight-type">
+                        <ul class="schedule-filters__item-option-list">
+                            <li class="schedule-filters__item-option j-schedule-filter-arrival">
+                                <input class="schedule-filters__item-option-input" type="radio" name="flight_type" id="Arrival_to_Vladivostok">
+                                <label class="schedule-filters__item-option-label" for="Arrival_to_Vladivostok">Прибытие</label>
+                            </li>
+                            <li class="schedule-filters__item-option j-schedule-filter-departure j-schedule-filter-option-default schedule-filters__item-option--selected">
+                                <input class="schedule-filters__item-option-input" type="radio" name="flight_type" id="Departure_from_Vladivostok" checked="">
+                                <label class="schedule-filters__item-option-label" for="Departure_from_Vladivostok">Отправление</label>
+                            </li>
+                        </ul>
+                    </div>
+
+            
+                <div class="schedule-table_wrapper">
+                    <table class="schedule-table" id="schedule-table">
+                        <thead>
+                            <tr>
+                                <td>Рейс</td>
+                                <td>Маршрут</td>
+                                <td>Авиакомпания</td>
+                                <td>Дата и время</td>
+                                <td>Тип ВС</td>
+                            </tr>
+                        </thead>
+                        <tbody id="schedule-table-body">
+                            {% for schedule in schedules %}
+                                <tr>
+                                    <td>{{ schedule.flight_number }}</td>
+                                    <td>{{ schedule.route }}</td>
+                                    <td>{{ schedule.airline.name }}</td> 
+                                    <td>{{ schedule.departure_date }} {{ schedule.departure_time }}</td>
+                                    <td>{{ schedule.transport_model }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="6">Рейсов нет</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>                    
+                   <p id="no-flights-message" style="display: none;">Рейсов нет</p>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
+
